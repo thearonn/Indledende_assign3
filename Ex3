@@ -78,11 +78,11 @@ public class RaceTrack {
 						
 						if(pos_x > -r && pos_x < 0 && prev_x >= 0 && prev_x < r && pos_y > r/2){
 							System.out.println("You crossed the finish line from the wrong direction");
-						break;
+							countcross = countcross -1;
 						}
 						
 						// If a move crosses the finish line
-						if(prev_x >= -r && prev_x < 0 && pos_x > 0 && pos_x <= r && pos_y >= r/2 && pos_y <= r) {
+						if(prev_x >= -r && prev_x <= 0 && pos_x > 0 && pos_x <= r && pos_y >= r/2 && pos_y <= r) {
 							countcross = countcross + 1;
 							if (countcross == 1) {
 								System.out.println("You have now crossed the finish line the first time using " + Integer.toString(countmove) + " steps!" );
