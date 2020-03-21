@@ -1,0 +1,52 @@
+import java.util.Scanner;
+/*this program takes an integer between 1 and 2^63 − 1, and outputs it's prime factors */
+public class PrimeFactors {
+	public static void main(String[] args){
+		factorize(new Scanner(System.in));
+	}
+	public static void factorize(Scanner console) {
+		System.out.println("Enter integer greater than 1: ");
+		long n=testInput(new Scanner(System.in)); //testing if input has correct form, if true, returns input
+		if(n==0) {return;}
+		System.out.print("List of prime factors: ");
+		long i=2; //the first prime
+		while(i <=Math.sqrt(n)) {
+			if (n%i==0) { //if n % (a prime) ==0, then this prime is a factor
+				System.out.print((long) i + ", ");
+				n=(long) n/i; //update the part to be factored
+				i=2;
+			} else {
+				i+=1; //if 2 is not a factor, check 3, etc. Ideally we only check primes, but this requires making such a list, which is tedious for large n 
+			}
+		}
+		System.out.println(n);
+		repeat(new Scanner(System.in));
+	}
+	public static long testInput(Scanner console) {
+		if(!console.hasNextLong()) {
+			System.out.println("Please type a number");
+			factorize(new Scanner(System.in));
+		}
+		long n = console.nextLong();
+		if(n==0) {
+			return 0;
+		} else if(n<1){
+			System.out.println("the number must be greater than 1. Try again");
+			factorize(new Scanner(System.in));
+		}
+		return n;
+	}
+	public static void repeat(Scanner console) {
+		System.out.println("Do you wish to enter a new number? (y/n) ");
+		String ans = console.nextLine();
+		if (!ans.equals("y") && !ans.equals("n")){
+			System.out.println("Type \"y\" for yes and \"n\" for no. Try again");
+			ans = console.nextLine();		
+		}
+		if(ans.equals("y")) {
+			factorize(new Scanner(System.in));
+		} else if (ans.equals("n")) {
+			System.out.println("Thank you. Have a nice day.");
+		}
+	}
+}
