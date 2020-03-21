@@ -1,0 +1,172 @@
+import java.util.Scanner;
+
+public class RaceTrack {
+
+	public static void main(String[] args) {
+		drawTrack(new Scanner(System.in));
+	}
+	
+	public static void drawTrack(Scanner console){
+		System.out.println("Enter size of grid: ");
+		double r = console.nextDouble();
+		double cx = 0; // center x-coordinate
+		double cy = 0; // center y-coordinate
+		StdDraw.setXscale(-r-1,r+1); // grid size x-axis
+		StdDraw.setYscale(-r-1,r+1); // grid size y-axis 
+		StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+		StdDraw.filledSquare(cx,cy,r);
+		// Draw grid on track
+				StdDraw.setPenColor(StdDraw.BLACK);
+				for(int i = 0; i < 2*r; i++){
+					StdDraw.line(-r+i, -r, -r+i, r);
+					StdDraw.line(-r, -r+i, r, -r+i);
+				}
+		
+		// Draw the inner square
+		StdDraw.setPenColor(StdDraw.WHITE);
+		StdDraw.filledSquare(cx,cy,r/2);
+		
+		// Start- and finish line
+		StdDraw.setPenRadius(0.005);
+		StdDraw.setPenColor(StdDraw.GREEN);
+		StdDraw.line(cx, r/2, cx, r);
+		
+		// Mark inner and outer edges
+		StdDraw.setPenColor(StdDraw.BLACK);
+		StdDraw.line(-r, -r, -r, r);
+		StdDraw.line(-r, r, r, r);
+		StdDraw.line(r, -r, r, r);
+		StdDraw.line(-r, -r, r, -r);
+		StdDraw.line(-r/2, -r/2, -r/2, r/2);
+		StdDraw.line(-r/2, r/2, r/2, r/2);
+		StdDraw.line(r/2, -r/2, r/2, r/2);
+		StdDraw.line(-r/2, -r/2, r/2, -r/2);
+		
+		// Starting conditions
+		int prev_x = 0;
+		int prev_y = (int)(Math.ceil(r-r/4));
+		int move_x = 0;
+		int move_y = 0;
+		int countcross = 0;
+		int countmove = 1;
+		int best = 10000;
+		StdDraw.setPenRadius(0.01);
+		StdDraw.setPenColor(StdDraw.BLACK);
+		StdDraw.point(prev_x,prev_y);
+		
+		// Only asks for next direction as long as x is inside the legal area of the track
+		while(prev_x >= -r && prev_x <= r && prev_y >= r/2 && prev_y <= r  ||
+				prev_x >= -r && prev_x <= -r/2 && prev_y >= -r/2 && prev_y <= r/2 ||
+				prev_x >= r/2 && prev_x <= r && prev_y >= -r/2 && prev_y <= r/2 ||
+				prev_x >= -r && prev_x <= r && prev_y >= -r && prev_y <= -r/2
+				) { 
+			System.out.println("Enter direction (an integer between 1 and 9): ");
+			if (console.hasNextInt()) {
+				int dir = console.nextInt();
+				if (dir < 1 || dir > 9) {
+					System.out.println("Direction has to be a number between 1 and 9");
+				}
+				else {
+					int pos_x = step_x(dir, prev_x) + move_x; // The position is affected by the previous move
+					int pos_y = step_y(dir, prev_y) + move_y;
+					
+					if(pos_x > -r && pos_x < 0 && prev_x >= 0 && prev_x < r && pos_y > r/2){
+						System.out.println("You crossed the finish line from the wrong direction");
+					break;
+					}
+					
+					// If a move crosses the finish line
+					if(prev_x >= -r && prev_x < 0 && pos_x > 0 && pos_x <= r && pos_y >= r/2 && pos_y <= r) {
+						countcross = countcross + 1;
+						if (countcross == 1) {
+							System.out.println("You have now crossed the finish line the first time using " + Integer.toString(countmove) + " steps!" );
+						}
+						else {
+							System.out.println("You have now crossed the finish line " + Integer.toString(countcross) + " times using " + Integer.toString(countmove) + " steps!" );
+						}
+						if (countmove < best) {
+							best = countmove; // Saves the smallest number of moves it takes to cross the finish line
+						}
+						countmove = 0;	
+					}
+					// Warning the user, if they are going in the wrong direction on the sides of the tracks
+					if (prev_x >= -r/2 && prev_x <= r/2 && prev_y >= r/2 && prev_y <= r && prev_x > pos_x ||
+						prev_x >= -r/2 && prev_x <= r/2 && prev_y >= -r && prev_y <= -r/2 && pos_x > prev_x ||
+						prev_x >= -r && prev_x <= -r/2 && prev_y >= -r/2 && prev_y <= r/2 && prev_y > pos_y ||
+						prev_x >= r/2 && prev_x <= r && prev_y >= -r/2 && prev_y <= r/2 && pos_y > prev_y) {
+							System.out.println("Oh-oh you are going in the wrong direction!");
+					}
+							
+					// Draws the track
+					StdDraw.setPenColor(StdDraw.RED);
+					StdDraw.setPenRadius();
+					StdDraw.line(prev_x,prev_y,pos_x,pos_y);
+					StdDraw.setPenRadius(0.01);
+					StdDraw.setPenColor(StdDraw.BLACK);
+					StdDraw.point(prev_x,prev_y);
+					StdDraw.setPenColor(StdDraw.BLUE);
+					StdDraw.point(pos_x,pos_y);
+					move_x = pos_x-prev_x;
+					move_y = pos_y - prev_y;
+					
+					// Checks if the move is skipping a corner
+					if (prev_x <= -r/2 && pos_x  >= -r/2 || 
+						pos_x <= -r/2 && prev_x >= -r/2 ||
+						prev_x <= r/2 && pos_x >= r/2 || 
+						pos_x <= r/2 &&  prev_x >= r/2) {
+						if (move_x != 0) {
+							double a = move_y/move_x;
+							double b = pos_y - a*pos_x;
+							if (-a*r/2+b < r/2 && -a*r/2+b > - r/2 || a*r/2+b < r/2 && a*r/2+b > - r/2) {
+								System.out.println("You crossed the border of the track.");
+								break;
+							}
+						}
+					}
+					// Saves move as previous move and moves back to enter new input
+					prev_x = pos_x;
+					prev_y = pos_y;
+				}
+				countmove = countmove +1;
+			}
+			else {
+				System.out.println("Input is not an interger between 1 and 9");
+				break;
+			}
+		}
+		// Message if game is ended, with the number og rounds and number of moves
+		System.out.println("Sorry, end of game.");
+		if (countcross == 0) {
+			System.out.println("You didn't cross the finish line. Try again!");
+		}
+		else if (countcross == 1) {
+			System.out.println("You crossed the finish line once using " + Integer.toString(countmove) + " moves!" );
+		}
+		else {
+			System.out.println("You crossed the finish line " + Integer.toString(countcross) + " times! Your best round was in " + Integer.toString(best) + " moves!" );
+		}
+		
+	}
+	// Translates the input to movement in the x-direction
+	public static int step_x(int dir, int pos_x) {
+		if (dir == 1 || dir == 4 || dir == 7) {
+			pos_x = pos_x - 1;
+		}
+		else if (dir == 3 || dir == 6 || dir == 9) {
+			pos_x = pos_x + 1;
+		}
+	return pos_x;
+	}
+	// Translates the input to movement in the y-direction
+	public static int step_y(int dir,int pos_y) {
+		if (dir == 1 || dir == 2 || dir == 3) {
+			pos_y = pos_y - 1;
+		}
+		else if (dir == 7 || dir == 8 || dir == 9) {
+			pos_y = pos_y + 1;
+		}
+	return pos_y;
+	}	
+}
+
+
