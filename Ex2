@@ -70,7 +70,7 @@ public class RaceTrack {
 				if (console.hasNextInt()) {
 					double dir = console.nextInt();
 					if (dir < 1 || dir > 9) {
-						System.out.println("Direction has to be a number between 1 and 9");
+						System.out.println("Direction has to be a number between 1 and 9, please try again");
 					}
 					else {
 						double pos_x = step_x(dir, prev_x) + move_x; // The position is affected by the previous move
@@ -154,7 +154,7 @@ public class RaceTrack {
 		
 		}
 		else {
-			System.out.println("Grid size has to be a positive number, at least 1");
+			System.out.println("Grid size has to be a positive number, at least 1. Please try again");
 		}	
 	}
 	// Translates the input to movement in the x-direction
