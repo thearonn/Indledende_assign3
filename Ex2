@@ -1,0 +1,40 @@
+/* This program computes a random walk in a grid of size (-n,n), where n is chosen by the user. 
+ * The program returns the position at each step of the walk as well as a figure illustrating the walk. */
+import java.util.*;  // Import the Scanner class etc.  
+public class RandomWalk {
+	public static void main(String[] arsg){
+		Scanner console = new Scanner(System.in);
+		System.out.print("Enter size of grid:");
+		// Run the program if n is an integer
+		if(console.hasNextInt()){ 
+			int n = console.nextInt(); 
+			if(n <= 0){System.out.println("Integer has to be positive");} 
+			// Initializing 
+			int x = 0; // start position for x-coordinat
+			int y = 0; // start position for y-coordinat		
+			int count = 0;  // number of steps
+			System.out.println("Position = " + "("+Integer.toString(x)+","+Integer.toString(y)+")");
+			// Random walk 
+			while(-n <= x && x <= n && -n <= y && y <= n){
+				x = x + Step(); // step at x-axis
+				y = y + Step(); // step at y-axis
+				System.out.println("Position = " + "("+Integer.toString(x)+","+Integer.toString(y)+")"); // print current position
+				DrawRandomWalk(n,x,y); // draw a point for current position
+				count = count + 1;
+			}
+			System.out.println("Total number of steps = " + Integer.toString(count)); // print number of steps
+		}
+		else{System.out.println("Input is not an integer");} 
+	}
+	public static int Step(){
+		Random random = new Random();
+		int r = random.nextInt(3)-1; // r is an integer randomly chosen from the set {-1,0,1}
+		return r;
+	}
+	public static void DrawRandomWalk(int n, int x, int y){
+		StdDraw.setXscale(-n*1.1,n*1.1); // grid size x-axis
+		StdDraw.setYscale(-n*1.1,n*1.1); // grid size y-axis
+		StdDraw.setPenRadius(0.25/n); // point size
+		StdDraw.point(x,y);
+	}
+}
