@@ -1,5 +1,5 @@
 import java.util.Scanner;
-/*this program takes an integer between 1 and 2^63 − 1, and outputs it's prime factors */
+/*this program takes an integer between 1 and 2^63 âˆ’ 1, and outputs it's prime factors */
 public class PrimeFactors {
 	public static void main(String[] args){
 		factorize(new Scanner(System.in));
@@ -24,17 +24,18 @@ public class PrimeFactors {
 	}
 	public static long testInput(Scanner console) {
 		if(!console.hasNextLong()) {
-			System.out.println("Please type a number");
 			factorize(new Scanner(System.in));
-		}
-		long n = console.nextLong();
-		if(n==0) {
 			return 0;
-		} else if(n<1){
-			System.out.println("the number must be greater than 1. Try again");
-			factorize(new Scanner(System.in));
+		} else {
+			long n = console.nextLong();
+			if(n==0) {
+				return 0;
+			} else if(n<1){
+				System.out.println("the number must be greater than 1. Try again");
+				factorize(new Scanner(System.in));
+			}
+			return n;
 		}
-		return n;
 	}
 	public static void repeat(Scanner console) {
 		System.out.println("Do you wish to enter a new number? (y/n) ");
